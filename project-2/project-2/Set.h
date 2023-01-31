@@ -9,7 +9,7 @@
 #define Set_h
 #include <string>
 
-using ItemType = int;
+using ItemType = std::string;
 
 class Set
 {

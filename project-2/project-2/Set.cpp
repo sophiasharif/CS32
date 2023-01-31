@@ -12,70 +12,27 @@ Set::Set()
     :m_head(nullptr), m_tail(nullptr) { }
 
 Set::Set(const Set& other) {
+    // set up
+    m_head = nullptr;
+    m_tail = nullptr;
     
-    // edge case: other set is empty
-    if (other.size() == 0) {
-        m_head = nullptr;
-        m_tail = nullptr;
-        return;
-    }
-    
-    // create a starting node
-    m_head = new Node;
-    m_head->value = other.m_head->value;
-    m_head->next = nullptr;
-    m_head->previous = nullptr;
-    m_tail = m_head;
-    
-    // copy the rest of the nodes
-    Node* p = other.m_head->next;
+    // copy nodes
+    Node* p = other.m_head;
     while (p != nullptr) {
-        m_tail->next = new Node;
-        m_tail->next->previous = m_tail;
-        m_tail = m_tail->next;
-        m_tail->value = p->value;
-        m_tail->next = nullptr;
+        insert(p->value);
         p = p->next;
     }
 }
 
-
 Set& Set::operator=(const Set& other) {
     
-    // delete all nodes
-    if (!(m_head == nullptr)) { // if statement accounts for empty list
-        while (m_head->next != nullptr) {
-            m_head = m_head->next;
-            delete m_head->previous;
-        }
-        delete m_head;
-    }
-    
-    // if other list is empty, just reset values
-    if (other.size() == 0) {
-        m_head = nullptr;
-        m_tail = nullptr;
+    // edge case: attempting to assign set to itself
+    if (this == &other)
         return *this;
-    }
     
-    // create a new noggin
-    m_head = new Node;
-    m_head->value = other.m_head->value;
-    m_head->next = nullptr;
-    m_head->previous = nullptr;
-    m_tail = m_head;
-    
-    // copy the rest of the nodes
-    Node* p = other.m_head->next;
-    while (p != nullptr) {
-        m_tail->next = new Node;
-        m_tail->next->previous = m_tail;
-        m_tail = m_tail->next;
-        m_tail->value = p->value;
-        m_tail->next = nullptr;
-        p = p->next;
-    }
-    
+    // call copy constructor & destructor
+    Set temp(other);
+    swap(temp);
     return *this;
 }
 
@@ -91,6 +48,10 @@ Set::~Set() {
         delete m_head->previous;
     }
     delete m_head;
+}
+
+bool Set::empty() const {
+    return m_head == nullptr;
 }
 
 int Set::size() const {
@@ -128,7 +89,7 @@ bool Set::insert(const ItemType& value) {
         m_head = newHead;
     }
 
-//    // edge case: value is greater than the last item
+    // edge case: value is greater than the last item
     else if (m_tail->value < value) {
         Node* newTail = new Node;
         newTail->value = value;
@@ -137,8 +98,8 @@ bool Set::insert(const ItemType& value) {
         m_tail->next = newTail;
         m_tail = newTail;
     }
-//
-//    // value is guaranteed to belong between head and tail
+
+    // value is guaranteed to belong between head and tail
     else {
         Node* p = m_head;
         while(p->next->value < value) // find insertion point
@@ -205,9 +166,11 @@ bool Set::erase(const ItemType& value) {
 }
 
 bool Set::contains(const ItemType& value) const {
+    // will not contain if list is empty
     if (m_head == nullptr)
         return false;
     
+    // loop through and check if node exists
     Node* p = m_head;
     while (p != nullptr) {
         if (p->value == value)
@@ -219,6 +182,7 @@ bool Set::contains(const ItemType& value) const {
 }
 
 bool Set::get(int pos, ItemType& value) const {
+    // check input is valid
     if (pos < 0 || pos >= size())
         return false;
     
@@ -244,7 +208,7 @@ void Set::swap(Set& other) {
 
 void unite(const Set& s1, const Set& s2, Set& result) {
     // create a temporary storage set
-    Set res = Set();
+    Set res;
     
     // loop through items in first set and insert
     for (int i=0; i!=s1.size(); i++) {
@@ -265,7 +229,7 @@ void unite(const Set& s1, const Set& s2, Set& result) {
 }
 
 void butNot(const Set& s1, const Set& s2, Set& result) {
-    Set res = Set();
+    Set res;
     for (int i=0; i!= s1.size(); i++){
         ItemType temp;
         s1.get(i, temp);
