@@ -1,0 +1,228 @@
+
+=================
+
+IMPLEMENTATION DESCRIPTION:
+
+=================
+
+
+I used a regular doubly-linked list - I didn't use dummy nodes or a circular structure. To find the beginning or end of the list, I checked if the current node's next value was the nullptr. I did not use a variable to track the size - I just used the size() function whenever I needed that information.
+
+
+=================
+
+PSEUDOCODE
+
+=================
+
+
+---------------
+~Set()
+---------------
+
+If there are no nodes in the set, don't do anything
+While there is a next node:
+	move m_head forward
+	delete m_head->previous
+
+---------------
+bool Set::insert(const ItemType& value)
+---------------
+If the value is already in the set, return false
+If the list is empty
+	create a new node at m_head, set up attributes
+	set up node values
+	set m_tail to m_head
+If the value is less than the head value
+	create a new node, set up attributes
+	set m_head->previous to this new node
+	make the new node the head
+If the value is greater than the tail value
+	create a new node, set up attributes
+	set m_tail->next to the new node
+	make the new node the tail
+Otherwise:  (the value is guaranteed to exist and to be between the head & the tail)
+	use pointer p loop through the list until the next node is greater than the given value
+	create a new node, set next and previous attributes.
+	set p->next->previous and p->next to be the new node, in that order.
+
+---------------
+bool Set::erase(const ItemType& value) 
+---------------
+If the list does not contain the value, return false
+If there is only one item in the list, set the head and tail to nullptr and delete the node
+If we're removing the head
+	make the next value the new head
+	set the new head's previous value to nullptr
+	delete the node that used to be the head
+If removing tail
+	make the previous value the new tail
+	set the new tail's next pointer to nullptr
+	delete the node that used to be the tail
+Otherwise (the value is guaranteed to exist and to be between the head & the tail)
+	create a pointer and loop until we're at the node we want to delete
+	re-wire linked list around node we're going to delete
+	delete the node
+
+---------------
+void unite(const Set& s1, const Set& s2, Set& result)
+---------------
+Create a new set
+Loop through s1 and insert each node into the new set
+Loop through s2 and insert each node into the new set (insert guarantees duplicate values will not be added)
+Copy this new set into result.
+
+---------------
+void butNot(const Set& s1, const Set& s2, Set& result)
+---------------
+Create a new set
+For each node in s1:
+	if s2 does not contain that node value:
+		add it to the new set
+Copy this new set into result.
+
+
+=================
+
+TEST CASES
+
+=================
+
+
+    // ITEMTYPE = STRING TESTS
+    Set set = Set();
+    string test = "";
+    
+    // edge case: test functions with empty set
+    assert(set.size() == 0); // empty set
+    assert(!set.get(0, test)); // no item to get
+    assert(!set.erase("y")); // nothing to remove
+    assert(!(set.contains("y"))); // doesn't contain
+    
+    // check functions with normal values
+    assert(set.insert("y")); // add value to empty set
+    assert(set.size() == 1); // check size
+    assert((set.contains("y"))); // contains 1 value
+    assert(set.get(0, test) && test=="y");
+    assert(!set.get(1, test)); // invalid param
+    assert(!set.get(-1, test)); // invalid input
+    assert(!set.insert("y")); // check function will not insert a duplicate value
+    assert(set.erase("y")); // edge case: erasing last value
+    assert(set.size() == 0); // empty set
+    assert(set.insert("y")); // normal insert
+    assert(set.insert("c")); // normal insert
+    assert(set.erase("c")); // edge case: erasing first value
+    assert(set.size() == 1); // regular size
+    assert(set.insert("c")); // normal insert
+    assert(set.erase("y")); // normal erase
+    assert(set.size() == 1); // normal size
+    assert(set.insert("y"));  // normal insert
+    assert(!set.insert("c"));  // normal insert
+    assert(set.contains("c")); // normal contains
+    assert(set.insert("z"));  // normal insert
+    assert(set.insert("d"));  // normal insert
+    assert(set.insert("a")); // normal insert
+    assert(set.insert("f")); // normal insert
+    assert(set.size() == 6); // normal size
+    assert(set.erase("c"));// normal erase 
+    assert(set.erase("f")); // normal erase
+    assert(set.erase("d")); // normal erase
+    assert(set.size() == 3); // normal size
+    assert(set.insert("d")); // normal insert
+    assert(set.insert("f")); // normal insert
+    assert(set.insert("c")); // normal insert
+    assert(set.erase("z")); // normal erase
+    assert(set.size()==5);
+    // linked list now is: a c d f y
+
+    // test get
+    assert(!set.get(-1, test)); // invalid param
+    assert(!set.get(5, test)); // invalid param
+    assert(set.get(0, test) && test=="a"); // check each value is correct
+    assert(set.get(1, test) && test=="c");
+    assert(set.get(2, test) && test=="d");
+    assert(set.get(3, test) && test=="f");
+    assert(set.get(4, test) && test=="y");
+	
+    // set up second set
+    Set set2;
+    set2.insert("j");
+    set2.insert("k");
+    set2.insert("l");
+
+    // test swap
+    set2.swap(set);
+    assert(set2.size() == 5);
+    assert(set2.get(0, test) && test=="a");
+    assert(set2.get(4, test) && test=="y");
+    assert(set.size() == 3);
+    assert(set.get(0, test) && test=="j");
+    assert(set.get(2, test) && test=="l");
+
+    Set set3 = set; // test copy constructor
+    assert(set.size() == set3.size()); // check sizes of two sets are equal
+    assert(set3.get(0, test) && test=="j"); // check first value is the same
+    assert(set3.get(2, test) && test=="l"); // check last value is the same
+
+    set3 = set2; // test assignment operator
+    assert(set3.size() == 5); // check size changed
+    assert(set3.get(0, test) && test=="a"); // check first value is the same
+    assert(set3.get(4, test) && test=="y"); // check last value is the same
+
+    
+    unite(set, set2, set3); // test unite (normal conditions)
+    assert(set3.size() == 8); // check size is correct
+    unite(set3, set, set2); // test unite (no items from second set included)
+    assert(set2.size() == 8); // check size is correct
+    Set set4;
+    unite(Set(), Set(), set4); // edge case: both sets are empty
+    assert(set4.size() == 0); // check size is correct
+    unite(set4, set, set3); // uniting with empty set
+    assert(set.size() == set3.size()); // check size
+
+// ITEMTYPE = INT TESTS
+    // set up tests
+    int arr1[5] = {2, 8, 3, 9, 5};
+    int arr2[5] = {6, 3, 8, 5, 10};
+    int uniteArr[7] = {9, 3, 6, 5, 10, 2, 8};
+    int butNotArr[2] = {9, 2};
+
+    Set s1, s2;
+    for (int i=0; i!=5; i++){
+        s1.insert(arr1[i]);
+        s2.insert(arr2[i]);
+    }
+
+    // unite testing
+    Set uniteS;
+    unite(s1, s2, uniteS);
+    assert(uniteS.size() == 7);
+    for (int i=0; i<7; i++) {
+        assert(uniteS.contains(uniteArr[i]));
+    }
+    // check we can pass unite() the same set:
+    unite(uniteS, Set(), uniteS);
+    for (int i=0; i<7; i++) {
+        assert(uniteS.contains(uniteArr[i]));
+    }
+
+    // but not testing
+    Set butNotSet;
+    butNot(s1, s2, butNotSet);
+    assert(butNotSet.size() == 2);
+    for (int i=0; i<2; i++) {
+        assert(butNotSet.contains(butNotArr[i]));
+    }
+    assert(!butNotSet.contains(3) && !butNotSet.contains(8));
+    // check we can pass butNot the same set:
+    butNot(s1, Set(), s1);
+    for (int i=0; i!=5; i++){
+        assert(s1.contains(arr1[i]));
+    }
+    // edge cases:
+    Set t;
+    butNot(Set(), Set(), t);
+    assert(t.size() == 0);
+    unite(Set(), Set(), t);
+    assert(t.size() == 0);
+    

@@ -1,0 +1,26 @@
+1e) Adding new elements to v2 when k=0 invalidates p because the vector may need to allocate new memory and copy the existing elements into a new location. This may cause the memory address of the elements in the vector to change, causing p to no longer point to the correct location.
+
+3) The Set class has methods that use comparison operators between objects stored in the set, so the results of these comparisons must be defined. There is no comparison operator defined for the Coord class so that code does not make sense, which is why the compiler throws an error.
+
+4b) We need the path to keep track of the recursive calls that happened before the current recursive call, as the current call has no way of knowing its history. 
+
+5a) The time complexity is O(N^3). The outer-most for loop run N times, the loop embedded in that loops runs N times for each iteration of the outer loop, and the inner-most loop also runs N times for each iteration of the middle loop. This makes the time complexity O(N*N*N) = O(N^3).
+
+5b) Even with this optimization, the time complexity is still O(N^3), as the number of times each loop runs is still proportional to N. Even though the middle for loop now only iterates N/2 times, we omit the coefficient when using O(n) notion.
+
+6a) The time complexity is O(N^2).
+
+All of the comparisons before the for loop happen in constant time, so they are negligible when computing time complexity. The for loop iterates though each element of set, so its time complexity is O(N). Within the body of the for loop, we call two other methods of Set -- before we proceed, let's find the time complexity for those.
+
+Since the get() method has the optimization of starting at the start or end depending on which is closer to the insertion point, in the worst case, it will take N/2 iterations to reach the correct insertion point, and then will execute the Node insertion in constant time. Ultimately, this means get() happens in O(N) time.
+
+The insert() method first calls findFirstAtLeast(), which executes in O(N) time at worst because the function has to walk through the entire linked list if no match is found. The insertBefore() method happens in constant time because it already has a reference to the place the node should be inserted, and just has to re-wire the pointer. Thus, the bottleneck of insert() is findFirstAtLeast(), so insert() happens in O(N) time.
+
+Since both get() and insert() have O(N) time, each iteration of the for loop will also perform a number of operations proportional to N. This gives us (N iterations of the for loop) * (N operations in each iteration), so the time complexity is O(N^2).
+
+6b) The time complexity is O(NlogN).
+
+The first two for loops iterate over the N items in set1 and set2, so they happen in O(N) time. As mentioned the program, the sorting happens in O(NlogN) time. Erasing all the nodes in set3 happens in O(N) time because we have to visit each node to erase it. Copying each item in the vector into set3 happens in O(2N) time, as we have to visit each of the 2N items in the vectot. Thus, the total time complexity is O(N+N+NlogN+N+2N) = O(NlogN).
+
+6c) The time complexity is O(N). Everything in the function is O(N) time except for the two loop declarations, both of which happen in O(N) time since the number of iterations is directly proportional to the number of items in the set. This makes the net time complexity O(N).
+
