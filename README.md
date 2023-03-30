@@ -1,6 +1,6 @@
 # cs-32
 
-These are my projects from CS32 in Winter 2023 with Professor Smallberg. Project 3 and project 4 are in separate repositories.
+These are my projects from CS32 in Winter 2023 with Professor Smallberg. [Project 3](https://github.com/sophiasharif/mario-party-clone) and [project 4](https://github.com/sophiasharif/pnetphlix) are in separate repositories.
 
 | Project     | Grade |
 | :---------: | :---: |
