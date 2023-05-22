@@ -6,8 +6,8 @@ These are my projects from CS32 in Winter 2023 with Professor Smallberg. [Projec
 | :---------: | :---: |
 | Project 1   | 100/100 |
 | Project 2   | 100/100 |
-| [Project 3](https://github.com/sophiasharif/mario-party-clone)    |  |
-| [Project 4](https://github.com/sophiasharif/pnetphlix)|  |
+| [Project 3](https://github.com/sophiasharif/mario-party-clone)    | 100/100 |
+| [Project 4](https://github.com/sophiasharif/pnetphlix)| score never released :( |
 
 | Homework    | Grade |
 | :---------: | :---: |
