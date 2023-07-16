@@ -16,3 +16,6 @@ These are my projects from CS32 in Winter 2023 with Professor Smallberg. [Projec
 | Homework 3   | 100/100 |
 | Homework 4   | 95/100 |
 | Homework 5   | 100/100 |
+
+
+![](https://view-counter.onrender.com/gh-CS32)
